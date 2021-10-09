@@ -17,6 +17,10 @@ dbConnection();
 
 console.log(process.env);
 
+//directorio publico
+
+app.use(express.static('public'));
+
 //rutas
 
 //Lectura del Body
