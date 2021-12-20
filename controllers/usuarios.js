@@ -19,7 +19,7 @@ const getUsuarios  = async(req,res)=>{
         Usuario.count()
         ]);
 
-    res.status(400).json({
+    res.status(200).json({
             ok:true,
             usuarios,
             uid:req.uid,
@@ -65,7 +65,7 @@ const crearusuario  = async (req,res = response)=>{
             //generar token
             const token  = await generarJWT(usuario.id);
     
-        res.status(400).json({
+        res.status(200).json({
                 ok:true,
                 usuario,
                 token
@@ -103,7 +103,8 @@ const actualizarUsuario = async(req,res = response) =>{
 
         //Actualizacion
         const {password,google,email,...campos} = req.body;
-        if(usuarioDb.email !== email){
+
+      /*  if(usuarioDb.email !== email){
             delete campos.email;
         }else{
 
@@ -115,9 +116,30 @@ const actualizarUsuario = async(req,res = response) =>{
                 })
 
             }
-        }
+        }*/
 
-        campos.email = email;
+        if ( usuarioDb.email !== email ) {
+
+            const existeEmail = await Usuario.findOne({ email });
+            if ( existeEmail ) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'Ya existe un usuario con ese email'
+                });
+            }
+        }
+        
+
+        if(!usuarioDb.google){
+            campos.email = email;
+        }else if(usuarioDb.email !== email){
+            return res.status(400).json({
+                ok:false,
+                msg:'Usuarios de google no pueden cambiar su correo'
+            });
+
+        }
+       
         const usuarioActualizado = await Usuario.findByIdAndUpdate(uid,campos,{new:true});
 
 
@@ -158,7 +180,7 @@ const actualizarUsuario = async(req,res = response) =>{
 
         await Usuario.findByIdAndDelete(uid);
 
-        res.status(500).json({
+        res.status(200).json({
             ok:true,
             msg:'Usuario eliminado'
         });

@@ -4,12 +4,13 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const {getMedico,
         crearMedico,
         ActualizarMedico,
-        borrarMedico} = require('../controllers/medicos');
+        borrarMedico,
+        getMedicoById} = require('../controllers/medicos');
 
 const router = Router();
 const { validarJWT } = require('../middlewares/validar-jwt');
 
-router.get('/',getMedico);
+router.get('/',validarJWT,getMedico);
 
 router.post('/',
 
@@ -33,12 +34,9 @@ router.put('/:id',
       validarCampos
 ],ActualizarMedico);
 
-router.delete('/:id',[
+router.delete('/:id',  validarJWT,borrarMedico);
 
-  validarJWT,
-  check('nombre','el nombre de medico es necesario').not().isEmpty(),
-  validarCampos
-],borrarMedico);
+router.get('/:id',  validarJWT,getMedicoById);
 
 
 

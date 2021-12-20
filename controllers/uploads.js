@@ -36,9 +36,9 @@ const  fileupload = (req, res = response)=>{
       const nombreCortado = file.name.split('.');
       const extensionArchivo = nombreCortado[nombreCortado.length -1 ];
 
-    const extensionesValidas =['png','jpg','jepg','gif'];
+    const extensionesValidas = ['png','jpg','jpeg','gif'];
 
-    if(extensionesValidas.includes(extensionArchivo)){
+    if(!extensionesValidas.includes(extensionArchivo)){
 
         return res.status(400).json({
             ok:false,
